@@ -5,6 +5,7 @@ import sinon from 'sinon';
 
 import Formsy from './..';
 import TestInput, { InputFactory } from './utils/TestInput';
+import TestInputSaveCallback from './utils/TestInputWIthSaveCallback';
 import immediate from './utils/immediate';
 
 export default {
@@ -561,6 +562,32 @@ export default {
 
     test.equal(renderSpy.calledOnce, true);
 
+    test.done();
+
+  },
+
+  'should allow callback after setValue': function (test) {
+
+    var callbackSpy = sinon.spy();
+
+    const TestForm = React.createClass({
+      render() {
+        return (
+          <Formsy.Form >
+            <TestInputSaveCallback name="foo[0]" value="" afterSave={callbackSpy}/>
+          </Formsy.Form>
+        );
+      }
+    });
+    const form = TestUtils.renderIntoDocument(<TestForm/>);
+
+    const input = TestUtils.findRenderedDOMComponentWithTag(form, 'INPUT');
+    TestUtils.Simulate.change(input, {target: {value: 'foo'}});
+
+    test.expect(1);
+
+    test.equal(callbackSpy.called, true);
+    
     test.done();
 
   }
